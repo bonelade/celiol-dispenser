@@ -133,10 +133,15 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   cursor: grabbing;
 }
 
-/* Responsive Touch Target Sizing */
+/* Responsive Touch Target Sizing & Form Controls (Prevents iOS auto-zoom on input focus) */
 @media (max-width: 640px) {
-  button:not(.hs-carousel-pagination-item), input, select {
-    font-size: 14px !important;
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 15px;
   }
   .hs-carousel-pagination button.hs-carousel-pagination-item {
     font-size: 11px !important;

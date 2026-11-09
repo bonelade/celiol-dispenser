@@ -60,6 +60,7 @@ function setupEventListeners() {
         document.querySelectorAll(`input[name="${name}"]:checked`).forEach(c => {
           targetArray.push(c.value);
         });
+        updateSeriesPillStyles();
         applyFiltersAndRender();
       });
     });
@@ -82,9 +83,77 @@ function setupEventListeners() {
       if (searchInput) searchInput.value = '';
       currentFilter.search = '';
       currentFilter.series = [];
+      updateSeriesPillStyles();
       applyFiltersAndRender();
     });
   }
+
+  // Backdrop click listeners for modals
+  const prodModal = document.getElementById('productDetailModal');
+  if (prodModal) {
+    prodModal.addEventListener('click', (e) => {
+      if (e.target === prodModal) closeProductDetail();
+    });
+  }
+
+  const rfqModal = document.getElementById('catalogRfqModal');
+  if (rfqModal) {
+    rfqModal.addEventListener('click', (e) => {
+      if (e.target === rfqModal) closeCatalogRfqModal();
+    });
+  }
+
+  // Escape key closes open modals
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeProductDetail();
+      closeCatalogRfqModal();
+    }
+  });
+}
+
+function setSeriesPillFilter(seriesValue) {
+  const cbDeluxe = document.querySelector('input[name="filterSeries"][value="Deluxe"]');
+  const cbUltimate = document.querySelector('input[name="filterSeries"][value="Ultimate"]');
+
+  if (seriesValue === 'all') {
+    currentFilter.series = [];
+    if (cbDeluxe) cbDeluxe.checked = false;
+    if (cbUltimate) cbUltimate.checked = false;
+  } else if (seriesValue === 'Deluxe') {
+    currentFilter.series = ['Deluxe'];
+    if (cbDeluxe) cbDeluxe.checked = true;
+    if (cbUltimate) cbUltimate.checked = false;
+  } else if (seriesValue === 'Ultimate') {
+    currentFilter.series = ['Ultimate'];
+    if (cbDeluxe) cbDeluxe.checked = false;
+    if (cbUltimate) cbUltimate.checked = true;
+  }
+
+  updateSeriesPillStyles();
+  applyFiltersAndRender();
+}
+window.setSeriesPillFilter = setSeriesPillFilter;
+
+function updateSeriesPillStyles() {
+  const pills = document.querySelectorAll('.series-pill');
+  const isDeluxe = currentFilter.series.length === 1 && currentFilter.series[0] === 'Deluxe';
+  const isUltimate = currentFilter.series.length === 1 && currentFilter.series[0] === 'Ultimate';
+  const isAll = currentFilter.series.length === 0 || currentFilter.series.length > 1;
+
+  pills.forEach(pill => {
+    const val = pill.getAttribute('data-series-pill');
+    let isActive = false;
+    if (val === 'all' && isAll) isActive = true;
+    if (val === 'Deluxe' && isDeluxe) isActive = true;
+    if (val === 'Ultimate' && isUltimate) isActive = true;
+
+    if (isActive) {
+      pill.className = 'series-pill active py-2 px-3.5 rounded-xl text-xs font-bold transition-all shrink-0 bg-brand-600 text-white shadow-sm font-heading';
+    } else {
+      pill.className = 'series-pill py-2 px-3.5 rounded-xl text-xs font-medium transition-all shrink-0 bg-white border border-gray-200 text-gray-700 hover:border-brand-600 hover:text-brand-600 font-heading';
+    }
+  });
 }
 
 function applyFiltersAndRender() {
@@ -127,6 +196,23 @@ function applyFiltersAndRender() {
     filtered.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
   }
 
+  // Update Result Count
+  const countEl = document.getElementById('catalogResultCount');
+  if (countEl) {
+    countEl.textContent = `Menampilkan ${filtered.length} model dispenser`;
+  }
+
+  // Update Active Filter Badge
+  const badgeEl = document.getElementById('activeFilterBadge');
+  if (badgeEl) {
+    if (currentFilter.series.length > 0 || currentFilter.search.length > 0) {
+      badgeEl.classList.remove('hidden');
+    } else {
+      badgeEl.classList.add('hidden');
+    }
+  }
+
+  updateSeriesPillStyles();
   renderProductGrid(filtered);
 }
 
@@ -136,13 +222,13 @@ function renderProductGrid(products) {
 
   if (products.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-dashed border-gray-300 p-8">
-        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-          <i data-lucide="package-search" class="w-8 h-8"></i>
+      <div class="col-span-full py-12 sm:py-16 text-center bg-white rounded-2xl border border-dashed border-gray-300 p-6 sm:p-8">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+          <i data-lucide="package-search" class="w-7 h-7 sm:w-8 sm:h-8"></i>
         </div>
         <h4 class="text-base font-bold text-gray-800 mb-1 font-heading">Tidak ada dispenser yang sesuai kriteria</h4>
         <p class="text-xs text-gray-500 max-w-sm mx-auto mb-4">Coba sesuaikan kata kunci pencarian atau bersihkan filter spesifikasi.</p>
-        <button onclick="document.getElementById('resetFiltersBtn').click()" class="py-2 px-4 inline-flex items-center text-xs font-semibold rounded-xl bg-brand-600 text-white hover:bg-brand-700">
+        <button onclick="document.getElementById('resetFiltersBtn').click()" class="py-2.5 px-4 inline-flex items-center text-xs font-semibold rounded-xl bg-brand-600 text-white hover:bg-brand-700 font-heading">
           Reset Semua Filter
         </button>
       </div>
@@ -159,24 +245,28 @@ function renderProductGrid(products) {
     const spoutLabel = p.spouts ? p.spouts.split('(')[0].trim() : 'Push Button';
 
     return `
-    <div class="group flex flex-col bg-white border border-gray-200 rounded-xl hover:border-brand-600 transition-colors overflow-hidden justify-between">
+    <div class="group flex flex-col bg-white border border-gray-200 rounded-2xl hover:border-brand-600 hover:shadow-md transition-all duration-300 overflow-hidden justify-between">
       <!-- Image area -->
-      <div class="relative h-60 bg-gray-50/70 p-6 flex items-center justify-center overflow-hidden border-b border-gray-100">
-        <img src="${p.imageCover}" alt="${p.name}" class="h-full object-contain group-hover:scale-105 transition-transform duration-500">
+      <div class="relative h-52 sm:h-60 bg-gray-50/70 p-4 sm:p-6 flex items-center justify-center overflow-hidden border-b border-gray-100">
+        <img src="${p.imageCover}" alt="${p.name}" class="h-full object-contain group-hover:scale-105 transition-transform duration-500" loading="lazy">
+        <!-- Series badge -->
+        <span class="absolute top-3 start-3 text-[10px] font-bold px-2 py-0.5 rounded-md bg-white/90 border border-gray-200 text-gray-700 font-heading">
+          ${p.series}
+        </span>
       </div>
 
       <!-- Content (Tampilan Ringkas Tanpa Keterangan Berlebih) -->
-      <div class="p-5 flex-1 flex flex-col justify-between">
+      <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
         <div>
-          <div class="mb-1.5">
+          <div class="mb-1">
             <span class="text-gray-400 font-heading tracking-wider uppercase text-[11px] font-semibold">${p.modelCode}</span>
           </div>
-          <h3 class="text-base font-bold text-gray-900 group-hover:text-brand-600 transition-colors mb-3 font-heading leading-snug">
+          <h3 class="text-sm sm:text-base font-bold text-gray-900 group-hover:text-brand-600 transition-colors mb-2 font-heading leading-snug">
             ${p.name}
           </h3>
 
-          <!-- Spek Kran & Penanda Custom Suhu (Clean Typography Tanpa Background Color) -->
-          <div class="flex items-center flex-wrap gap-x-2.5 gap-y-1 text-xs text-gray-600 mb-4">
+          <!-- Spek Kran & Penanda Custom Suhu -->
+          <div class="flex items-center flex-wrap gap-x-2.5 gap-y-1 text-xs text-gray-600 mb-3.5">
             <span class="inline-flex items-center gap-1.5 text-gray-700 font-medium">
               <i data-lucide="droplet" class="w-3.5 h-3.5 text-brand-600 shrink-0"></i>
               ${spoutLabel}
@@ -190,18 +280,19 @@ function renderProductGrid(products) {
         </div>
 
         <!-- Card Footer -->
-        <div class="pt-4 border-t border-gray-100">
-          <div class="mb-3.5">
-            <div class="text-lg sm:text-xl font-extrabold text-gray-900 font-heading tracking-tight leading-none">${formattedPrice}</div>
+        <div class="pt-3.5 border-t border-gray-100">
+          <div class="mb-3">
+            <span class="text-[10px] uppercase font-bold tracking-wider text-gray-400 block mb-0.5 font-heading">Estimasi Pembelian Unit</span>
+            <div class="text-base sm:text-xl font-extrabold text-gray-900 font-heading tracking-tight leading-none">${formattedPrice}</div>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="openProductDetail('${p.id}')" class="py-2 px-3 inline-flex items-center justify-center gap-x-1.5 text-xs font-semibold rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-brand-600 hover:border-brand-600 transition-colors font-heading">
-              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-              Spesifikasi
+            <button onclick="openProductDetail('${p.id}')" class="py-2.5 px-2 sm:px-3 inline-flex items-center justify-center gap-x-1.5 text-xs font-semibold rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-brand-600 hover:border-brand-600 transition-colors font-heading">
+              <i data-lucide="eye" class="w-3.5 h-3.5 shrink-0"></i>
+              <span class="truncate">Spesifikasi</span>
             </button>
-            <button onclick="openCatalogRfqModal('${p.modelCode}', '${p.name.replace(/'/g, "\\'")}')" class="py-2 px-3 inline-flex items-center justify-center gap-x-1.5 text-xs font-semibold rounded-xl border border-transparent bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-colors font-heading">
-              <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
-              Pesan Sekarang
+            <button onclick="openCatalogRfqModal('${p.modelCode}', '${p.name.replace(/'/g, "\\'")}')" class="py-2.5 px-2 sm:px-3 inline-flex items-center justify-center gap-x-1.5 text-xs font-semibold rounded-xl border border-transparent bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-colors font-heading">
+              <i data-lucide="shopping-bag" class="w-3.5 h-3.5 shrink-0"></i>
+              <span class="truncate">Pesan Sekarang</span>
             </button>
           </div>
         </div>
@@ -221,6 +312,11 @@ function openProductDetail(productId) {
   const modalEl = document.getElementById('productDetailModal');
   const contentEl = document.getElementById('productDetailContent');
   if (!modalEl || !contentEl) return;
+
+  // Reset scroll position to top
+  const modalInner = modalEl.querySelector('div');
+  if (modalInner) modalInner.scrollTop = 0;
+  modalEl.scrollTop = 0;
 
   const formattedPrice = product.purchasePrice
     ? `Rp ${Number(product.purchasePrice).toLocaleString('id-ID')}`
@@ -245,23 +341,23 @@ function openProductDetail(productId) {
   const normalYieldDesc = `${product.normalWaterYieldLph || 80} L/h`;
 
   contentEl.innerHTML = `
-    <div id="specDrawerContent" class="space-y-6">
+    <div id="specDrawerContent" class="space-y-5 sm:space-y-6">
       <!-- Top Overview Header: Tanpa Cards Sama Sekali -->
-      <div class="flex flex-col md:flex-row gap-6 items-center md:items-start pb-6 border-b border-gray-200">
+      <div class="flex flex-col md:flex-row gap-4 sm:gap-6 items-center md:items-start pb-5 sm:pb-6 border-b border-gray-200">
         <!-- Foto Produk (Clean Image Container Tanpa Card Border Tebal) -->
         <div class="w-full md:w-1/3 flex items-center justify-center p-2 shrink-0">
-          <img src="${product.imageCover}" alt="${product.name}" class="max-h-64 object-contain">
+          <img src="${product.imageCover}" alt="${product.name}" class="max-h-52 sm:max-h-64 object-contain">
         </div>
 
         <!-- Info Produk: Dipisah Jelas Tanpa Kotak-Kotak Cards -->
-        <div class="w-full md:w-2/3 flex flex-col justify-between space-y-4">
+        <div class="w-full md:w-2/3 flex flex-col justify-between space-y-3.5 sm:space-y-4">
           <div>
-            <div class="flex items-center gap-2 mb-1.5">
+            <div class="flex items-center gap-2 mb-1">
               <span class="text-xs font-bold text-brand-700 uppercase tracking-wider font-heading">${product.series}</span>
               <span class="text-xs text-gray-300">•</span>
               <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide font-heading">${product.modelCode}</span>
             </div>
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1.5 font-heading tracking-tight">${product.name}</h2>
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1 font-heading tracking-tight leading-snug">${product.name}</h2>
             <p class="text-xs text-gray-500 leading-relaxed">${product.idealFor}</p>
           </div>
 
@@ -291,13 +387,13 @@ function openProductDetail(productId) {
             </div>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="flex flex-col sm:flex-row flex-wrap gap-2.5 pt-2 no-print">
-            <button onclick="openCatalogRfqModal('${product.modelCode}', '${product.name.replace(/'/g, "\\'")}')" class="py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-xs font-bold rounded-xl border border-transparent bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-all font-heading">
+          <!-- Action Buttons (Responsive: Full-width on mobile, auto on desktop) -->
+          <div class="flex flex-col sm:flex-row flex-wrap gap-2.5 pt-1.5 no-print">
+            <button onclick="openCatalogRfqModal('${product.modelCode}', '${product.name.replace(/'/g, "\\'")}')" class="w-full sm:w-auto py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-xs font-bold rounded-xl border border-transparent bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-all font-heading">
               <i data-lucide="shopping-bag" class="w-4 h-4"></i>
               Pesan Sekarang
             </button>
-            <button onclick="printProductDatasheet('${product.id}')" class="py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-xs font-semibold rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-brand-600 hover:border-brand-600 transition-all font-heading">
+            <button onclick="printProductDatasheet('${product.id}')" class="w-full sm:w-auto py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-xs font-semibold rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-brand-600 hover:border-brand-600 transition-all font-heading">
               <i data-lucide="printer" class="w-4 h-4 text-gray-600"></i>
               Cetak Spesifikasi (PDF)
             </button>
@@ -307,15 +403,15 @@ function openProductDetail(productId) {
 
       <!-- Preline Segmented Navigation Tabs: 100% Berbasis Tabel, Tanpa Cards -->
       <div>
-        <nav class="flex p-1 space-x-1 bg-gray-100 rounded-xl border border-gray-200 mb-5 overflow-x-auto no-scrollbar" aria-label="SpecTabs" role="tablist">
-          <button type="button" class="hs-tab-active:bg-white hs-tab-active:text-gray-900 hs-tab-active:shadow-sm py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs font-semibold rounded-lg text-gray-600 hover:text-brand-600 focus:outline-none whitespace-nowrap shrink-0 font-heading active" id="spec-tab-1-btn" data-hs-tab="#spec-tab-1" aria-controls="spec-tab-1" role="tab">
-            <i data-lucide="table" class="w-3.5 h-3.5"></i> Spesifikasi Teknis Lengkap
+        <nav class="flex p-1 space-x-1 bg-gray-100 rounded-xl border border-gray-200 mb-4 sm:mb-5 overflow-x-auto no-scrollbar scroll-smooth" aria-label="SpecTabs" role="tablist">
+          <button type="button" class="hs-tab-active:bg-white hs-tab-active:text-gray-900 hs-tab-active:shadow-sm py-2 px-3 sm:px-4 inline-flex items-center gap-x-1.5 sm:gap-x-2 bg-transparent text-xs font-semibold rounded-lg text-gray-600 hover:text-brand-600 focus:outline-none whitespace-nowrap shrink-0 font-heading active" id="spec-tab-1-btn" data-hs-tab="#spec-tab-1" aria-controls="spec-tab-1" role="tab">
+            <i data-lucide="table" class="w-3.5 h-3.5 shrink-0"></i> <span>Spesifikasi Teknis Lengkap</span>
           </button>
-          <button type="button" class="hs-tab-active:bg-white hs-tab-active:text-gray-900 hs-tab-active:shadow-sm py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs font-semibold rounded-lg text-gray-600 hover:text-brand-600 focus:outline-none whitespace-nowrap shrink-0 font-heading" id="spec-tab-2-btn" data-hs-tab="#spec-tab-2" aria-controls="spec-tab-2" role="tab">
-            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Fitur & Keunggulan
+          <button type="button" class="hs-tab-active:bg-white hs-tab-active:text-gray-900 hs-tab-active:shadow-sm py-2 px-3 sm:px-4 inline-flex items-center gap-x-1.5 sm:gap-x-2 bg-transparent text-xs font-semibold rounded-lg text-gray-600 hover:text-brand-600 focus:outline-none whitespace-nowrap shrink-0 font-heading" id="spec-tab-2-btn" data-hs-tab="#spec-tab-2" aria-controls="spec-tab-2" role="tab">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 shrink-0"></i> <span>Fitur &amp; Keunggulan</span>
           </button>
-          <button type="button" class="hs-tab-active:bg-white hs-tab-active:text-gray-900 hs-tab-active:shadow-sm py-2 px-4 inline-flex items-center gap-x-2 bg-transparent text-xs font-semibold rounded-lg text-gray-600 hover:text-brand-600 focus:outline-none whitespace-nowrap shrink-0 font-heading" id="spec-tab-3-btn" data-hs-tab="#spec-tab-3" aria-controls="spec-tab-3" role="tab">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Paket Layanan Maintenance
+          <button type="button" class="hs-tab-active:bg-white hs-tab-active:text-gray-900 hs-tab-active:shadow-sm py-2 px-3 sm:px-4 inline-flex items-center gap-x-1.5 sm:gap-x-2 bg-transparent text-xs font-semibold rounded-lg text-gray-600 hover:text-brand-600 focus:outline-none whitespace-nowrap shrink-0 font-heading" id="spec-tab-3-btn" data-hs-tab="#spec-tab-3" aria-controls="spec-tab-3" role="tab">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 shrink-0"></i> <span>Paket Layanan Maintenance</span>
           </button>
         </nav>
 
@@ -325,86 +421,86 @@ function openProductDetail(productId) {
             <table class="min-w-full divide-y divide-gray-200 text-xs">
               <thead class="bg-white border-b-2 border-brand-600">
                 <tr>
-                  <th scope="col" class="px-4 py-3 text-left font-bold text-gray-700 font-heading w-1/3">Parameter Teknis</th>
-                  <th scope="col" class="px-4 py-3 text-left font-bold text-gray-700 font-heading w-2/3">Spesifikasi Detail Unit Celiol</th>
+                  <th scope="col" class="px-3.5 sm:px-4 py-2.5 sm:py-3 text-left font-bold text-gray-700 font-heading w-2/5 sm:w-1/3">Parameter Teknis</th>
+                  <th scope="col" class="px-3.5 sm:px-4 py-2.5 sm:py-3 text-left font-bold text-gray-700 font-heading w-3/5 sm:w-2/3">Spesifikasi Detail Unit Celiol</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Model / SKU Resmi</td>
-                  <td class="px-4 py-2.5 font-bold text-gray-900 font-heading">${product.modelCode}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Model / SKU Resmi</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-bold text-gray-900 font-heading">${product.modelCode}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Seri Produk & Pilihan Warna</td>
-                  <td class="px-4 py-2.5 text-gray-800">${product.series} (${product.color})</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Seri Produk & Pilihan Warna</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">${product.series} (${product.color})</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Material Eksterior Bodi</td>
-                  <td class="px-4 py-2.5 text-gray-800">${product.bodyMaterial}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Material Eksterior Bodi</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">${product.bodyMaterial}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Material Tangki Internal</td>
-                  <td class="px-4 py-2.5 text-gray-800">Stainless Steel SUS 304 Food Grade (Higienis & Anti-Bakteri, Bebas BPA)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Material Tangki Internal</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">Stainless Steel SUS 304 Food Grade (Higienis & Anti-Bakteri, Bebas BPA)</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Dimensi Mesin (P x L x T)</td>
-                  <td class="px-4 py-2.5 text-gray-800 font-mono">${product.dimensions}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Dimensi Mesin (P x L x T)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800 font-mono">${product.dimensions}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Konfigurasi Keran (Water Spout)</td>
-                  <td class="px-4 py-2.5 text-gray-900 font-semibold">${product.spouts}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Konfigurasi Keran (Water Spout)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-900 font-semibold">${product.spouts}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Kustomisasi Suhu Air</td>
-                  <td class="px-4 py-2.5 text-brand-700 font-semibold">Bisa Custom Suhu (Kombinasi Air Panas, Dingin, Suhu Ruang / Normal Sesuai Kebutuhan)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Kustomisasi Suhu Air</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-brand-700 font-semibold">Bisa Custom Suhu (Kombinasi Air Panas, Dingin, Suhu Ruang / Normal Sesuai Kebutuhan)</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Rekomendasi Kapasitas Harian</td>
-                  <td class="px-4 py-2.5 text-gray-900 font-semibold">${product.recommendedPax}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Rekomendasi Kapasitas Harian</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-900 font-semibold">${product.recommendedPax}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Debit Air Panas (Hot Water Yield)</td>
-                  <td class="px-4 py-2.5 text-gray-800">${hotYieldDesc}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Debit Air Panas (Hot Water Yield)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">${hotYieldDesc}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Debit Air Dingin (Cold Water Yield)</td>
-                  <td class="px-4 py-2.5 text-gray-800">${coldYieldDesc}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Debit Air Dingin (Cold Water Yield)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">${coldYieldDesc}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Debit Air Normal (Normal Water Yield)</td>
-                  <td class="px-4 py-2.5 text-gray-800">${normalYieldDesc}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Debit Air Normal (Normal Water Yield)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">${normalYieldDesc}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Total Daya Listrik (Power)</td>
-                  <td class="px-4 py-2.5 text-gray-800">${powerDesc}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Total Daya Listrik (Power)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">${powerDesc}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Tegangan Operasional (Voltage)</td>
-                  <td class="px-4 py-2.5 text-gray-800">${product.voltage || '220-240V ~ 50-60 Hz'}</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Tegangan Operasional (Voltage)</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">${product.voltage || '220-240V ~ 50-60 Hz'}</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Teknologi Filtrasi</td>
-                  <td class="px-4 py-2.5 text-gray-900 font-semibold">5-Tahap Reverse Osmosis (RO) Presisi 0.0001 Mikron</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Teknologi Filtrasi</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-900 font-semibold">5-Tahap Reverse Osmosis (RO) Presisi 0.0001 Mikron</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Kemurnian & Sterilisasi</td>
-                  <td class="px-4 py-2.5 text-gray-800">99.9% Kemurnian Air, Teruji Bebas Mikroplastik & Logam Berat, Sterilisasi UV-C LED</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Kemurnian & Sterilisasi</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">99.9% Kemurnian Air, Teruji Bebas Mikroplastik & Logam Berat, Sterilisasi UV-C LED</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Mekanisme Pengeluaran Air</td>
-                  <td class="px-4 py-2.5 text-gray-800">Tombol Kran Presisi (Push-Button Dispense) Berdaya Tahan Komersial Tinggi</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Mekanisme Pengeluaran Air</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">Tombol Kran Presisi (Push-Button Dispense) Berdaya Tahan Komersial Tinggi</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Standar Baku Mutu Air</td>
-                  <td class="px-4 py-2.5 text-gray-800">Memenuhi Standar Baku Mutu Air Minum Permenkes RI No. 2 Tahun 2023</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Standar Baku Mutu Air</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-800">Memenuhi Standar Baku Mutu Air Minum Permenkes RI No. 2 Tahun 2023</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Skema Pengadaan Resmi</td>
-                  <td class="px-4 py-2.5 text-gray-900 font-semibold">Sistem Beli Unit + Maintenance Rutin Rp 500.000 / bln</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Skema Pengadaan Resmi</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-900 font-semibold">Sistem Beli Unit + Maintenance Rutin Rp 500.000 / bln</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-2.5 font-medium text-gray-600 font-heading">Ketentuan Biaya Pengadaan</td>
-                  <td class="px-4 py-2.5 text-gray-600 italic">Biaya belum termasuk Pajak (PPN), Ongkos Kirim dan Pemasangan di luar instalasi pipa standar gedung</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 font-medium text-gray-600 font-heading">Ketentuan Biaya Pengadaan</td>
+                  <td class="px-3.5 sm:px-4 py-2 sm:py-2.5 text-gray-600 italic">Biaya belum termasuk Pajak (PPN), Ongkos Kirim dan Pemasangan di luar instalasi pipa standar gedung</td>
                 </tr>
               </tbody>
             </table>
@@ -417,9 +513,9 @@ function openProductDetail(productId) {
             <table class="min-w-full divide-y divide-gray-200 text-xs">
               <thead class="bg-white border-b-2 border-brand-600">
                 <tr>
-                  <th scope="col" class="px-4 py-2.5 text-center font-bold text-gray-700 font-heading w-12">No</th>
-                  <th scope="col" class="px-4 py-2.5 text-left font-bold text-gray-700 font-heading w-1/3">Fitur Rekayasa Produk</th>
-                  <th scope="col" class="px-4 py-2.5 text-left font-bold text-gray-700 font-heading">Deskripsi Keunggulan Teknis &amp; Higienitas</th>
+                  <th scope="col" class="px-2.5 sm:px-4 py-2.5 text-center font-bold text-gray-700 font-heading w-10 sm:w-12">No</th>
+                  <th scope="col" class="px-3 sm:px-4 py-2.5 text-left font-bold text-gray-700 font-heading w-2/5 sm:w-1/3">Fitur Rekayasa Produk</th>
+                  <th scope="col" class="px-3 sm:px-4 py-2.5 text-left font-bold text-gray-700 font-heading">Deskripsi Keunggulan Teknis &amp; Higienitas</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
@@ -429,9 +525,9 @@ function openProductDetail(productId) {
                     : [kf, ''];
                   return `
                     <tr class="hover:bg-gray-50/50">
-                      <td class="px-4 py-2.5 text-center font-bold text-brand-700 font-heading">${String(idx + 1).padStart(2, '0')}</td>
-                      <td class="px-4 py-2.5 font-bold text-gray-900 font-heading">${parts[0]}</td>
-                      <td class="px-4 py-2.5 text-gray-700">${parts[1] || parts[0]}</td>
+                      <td class="px-2.5 sm:px-4 py-2 sm:py-2.5 text-center font-bold text-brand-700 font-heading">${String(idx + 1).padStart(2, '0')}</td>
+                      <td class="px-3 sm:px-4 py-2 sm:py-2.5 font-bold text-gray-900 font-heading">${parts[0]}</td>
+                      <td class="px-3 sm:px-4 py-2 sm:py-2.5 text-gray-700">${parts[1] || parts[0]}</td>
                     </tr>
                   `;
                 }).join('')}
@@ -442,40 +538,44 @@ function openProductDetail(productId) {
 
         <!-- Tab 3: Layanan Maintenance & SLA -->
         <div id="spec-tab-3" class="hidden" role="tabpanel" aria-labelledby="spec-tab-3-btn">
+          <div class="sm:hidden flex items-center gap-1.5 text-[11px] text-gray-500 mb-2 font-heading">
+            <i data-lucide="move-horizontal" class="w-3.5 h-3.5 text-brand-600 shrink-0"></i>
+            <span>Geser tabel ke samping untuk melihat seluruh detail kolom</span>
+          </div>
           <div class="overflow-x-auto border border-gray-200 rounded-xl">
-            <table class="min-w-full divide-y divide-gray-200 text-xs">
+            <table class="min-w-[580px] sm:min-w-full divide-y divide-gray-200 text-xs">
               <thead class="bg-white border-b-2 border-brand-600">
                 <tr>
-                  <th scope="col" class="px-4 py-2.5 text-left font-bold text-gray-700 font-heading w-1/4">Komponen Layanan</th>
-                  <th scope="col" class="px-4 py-2.5 text-left font-bold text-gray-700 font-heading w-1/5">Frekuensi Kerja</th>
-                  <th scope="col" class="px-4 py-2.5 text-left font-bold text-gray-700 font-heading">Cakupan Kerja &amp; Standar Higienitas (${product.modelCode})</th>
-                  <th scope="col" class="px-4 py-2.5 text-left font-bold text-gray-700 font-heading w-1/6">Biaya Layanan</th>
+                  <th scope="col" class="px-3 sm:px-4 py-2.5 text-left font-bold text-gray-700 font-heading w-1/4">Komponen Layanan</th>
+                  <th scope="col" class="px-3 sm:px-4 py-2.5 text-left font-bold text-gray-700 font-heading w-1/5">Frekuensi Kerja</th>
+                  <th scope="col" class="px-3 sm:px-4 py-2.5 text-left font-bold text-gray-700 font-heading">Cakupan Kerja &amp; Standar Higienitas (${product.modelCode})</th>
+                  <th scope="col" class="px-3 sm:px-4 py-2.5 text-left font-bold text-gray-700 font-heading w-1/6">Biaya Layanan</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-3 font-semibold text-gray-900 font-heading align-top">Pemeliharaan Rutin Bulanan</td>
-                  <td class="px-4 py-3 text-brand-700 font-medium align-top">Setiap Bulan (1 Bulan Sekali)</td>
-                  <td class="px-4 py-3 text-gray-700 align-top">Pemeriksaan fungsi operasional unit ${product.name} (${product.modelCode}), inspeksi kelistrikan (${totalWatt}W), kalibrasi suhu kran (${product.spouts}), sanitasi tangki internal SUS 304, pembilasan (flushing) pipa internal, dan uji kualitas air TDS on-site.</td>
-                  <td class="px-4 py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 font-heading align-top">Pemeliharaan Rutin Bulanan</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-brand-700 font-medium align-top">Setiap Bulan (1 Bulan Sekali)</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-gray-700 align-top">Pemeriksaan fungsi operasional unit ${product.name} (${product.modelCode}), inspeksi kelistrikan (${totalWatt}W), kalibrasi suhu kran (${product.spouts}), sanitasi tangki internal SUS 304, pembilasan (flushing) pipa internal, dan uji kualitas air TDS on-site.</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-3 font-semibold text-gray-900 font-heading align-top">Pergantian Filter Terjadwal</td>
-                  <td class="px-4 py-3 text-brand-700 font-medium align-top">Bulanan &amp; Semesteran (6 Bulan Sekali)</td>
-                  <td class="px-4 py-3 text-gray-700 align-top">Penggantian rutin cartridge Sedimen PP setiap bulan, serta penggantian media Granular Activated Carbon, Blok Karbon, dan Membran Reverse Osmosis (RO) 0.0001 µm resmi unit ${product.modelCode} setiap 6 bulan secara konsisten.</td>
-                  <td class="px-4 py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 font-heading align-top">Pergantian Filter Terjadwal</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-brand-700 font-medium align-top">Bulanan &amp; Semesteran (6 Bulan Sekali)</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-gray-700 align-top">Penggantian rutin cartridge Sedimen PP setiap bulan, serta penggantian media Granular Activated Carbon, Blok Karbon, dan Membran Reverse Osmosis (RO) 0.0001 µm resmi unit ${product.modelCode} setiap 6 bulan secara konsisten.</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-3 font-semibold text-gray-900 font-heading align-top">Perbaikan Jika Ada Kerusakan</td>
-                  <td class="px-4 py-3 text-brand-700 font-medium align-top">Sesuai Kebutuhan (Kapan Pun Diperlukan)</td>
-                  <td class="px-4 py-3 text-gray-700 align-top">Garansi perbaikan darurat respons cepat teknisi dan penggantian suku cadang orisinal Celiol ${product.series} tanpa biaya tambahan jika terjadi kendala teknis atau aus komponen pada unit ${product.modelCode}.</td>
-                  <td class="px-4 py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 font-heading align-top">Perbaikan Jika Ada Kerusakan</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-brand-700 font-medium align-top">Sesuai Kebutuhan (Kapan Pun Diperlukan)</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-gray-700 align-top">Garansi perbaikan darurat respons cepat teknisi dan penggantian suku cadang orisinal Celiol ${product.series} tanpa biaya tambahan jika terjadi kendala teknis atau aus komponen pada unit ${product.modelCode}.</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
                 </tr>
                 <tr class="hover:bg-gray-50/50">
-                  <td class="px-4 py-3 font-semibold text-gray-900 font-heading align-top">24/7 Layanan Pelanggan Teknis</td>
-                  <td class="px-4 py-3 text-brand-700 font-medium align-top">24 Jam / 7 Hari (Respons Cepat)</td>
-                  <td class="px-4 py-3 text-gray-700 align-top">Dukungan hotline prioritas tim teknis PT Noto Water Envirotech via WhatsApp dan surel resmi sales@noto.asia guna memastikan kelancaran operasional pasokan air minum fasilitas kantor.</td>
-                  <td class="px-4 py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 font-heading align-top">24/7 Layanan Pelanggan Teknis</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-brand-700 font-medium align-top">24 Jam / 7 Hari (Respons Cepat)</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-gray-700 align-top">Dukungan hotline prioritas tim teknis PT Noto Water Envirotech via WhatsApp dan surel resmi sales@noto.asia guna memastikan kelancaran operasional pasokan air minum fasilitas kantor.</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
                 </tr>
               </tbody>
             </table>
