@@ -196,12 +196,6 @@ function applyFiltersAndRender() {
     filtered.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
   }
 
-  // Update Result Count
-  const countEl = document.getElementById('catalogResultCount');
-  if (countEl) {
-    countEl.textContent = `Menampilkan ${filtered.length} model dispenser`;
-  }
-
   // Update Active Filter Badge
   const badgeEl = document.getElementById('activeFilterBadge');
   if (badgeEl) {
@@ -249,10 +243,6 @@ function renderProductGrid(products) {
       <!-- Image area -->
       <div class="relative h-52 sm:h-60 bg-gray-50/70 p-4 sm:p-6 flex items-center justify-center overflow-hidden border-b border-gray-100">
         <img src="${p.imageCover}" alt="${p.name}" class="h-full object-contain group-hover:scale-105 transition-transform duration-500" loading="lazy">
-        <!-- Series badge -->
-        <span class="absolute top-3 start-3 text-[10px] font-bold px-2 py-0.5 rounded-md bg-white/90 border border-gray-200 text-gray-700 font-heading">
-          ${p.series}
-        </span>
       </div>
 
       <!-- Content (Tampilan Ringkas Tanpa Keterangan Berlebih) -->
