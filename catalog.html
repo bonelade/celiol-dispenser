@@ -205,12 +205,20 @@
 
   <!-- ================= PRELINE MODAL: QUICK VIEW / SPEC SHEET ================= -->
   <div id="productDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-gray-900/60 backdrop-blur-sm p-2 sm:p-4 md:p-6 flex items-start sm:items-center justify-center">
-    <div class="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full p-4 sm:p-6 md:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto border border-gray-200 my-auto">
-      <button onclick="closeProductDetail()" class="absolute top-3 end-3 sm:top-5 sm:end-5 p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors z-20 no-print" aria-label="Tutup detail modal">
-        <i data-lucide="x" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-      </button>
+    <div class="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full shadow-2xl relative max-h-[92vh] overflow-y-auto border border-gray-200 my-auto flex flex-col">
+      <!-- Sticky Close Header for Mobile & Desktop -->
+      <div class="sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 bg-white/95 backdrop-blur-md border-b border-gray-100 shrink-0 no-print">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-brand-600"></span>
+          <span class="text-xs font-bold text-gray-800 uppercase tracking-wider font-heading">Spesifikasi Detail Produk</span>
+        </div>
+        <button onclick="closeProductDetail()" class="p-1.5 sm:p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors" aria-label="Tutup detail modal">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
 
-      <div id="productDetailContent"></div>
+      <!-- Modal Scrollable Content Area -->
+      <div class="p-4 sm:p-6 md:p-8 pt-3 sm:pt-5" id="productDetailContent"></div>
     </div>
   </div>
 
