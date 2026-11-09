@@ -195,7 +195,7 @@ Di dalam modal / pop-up **Spesifikasi Produk** (`#productDetailModal`):
      * **Standar Warna Font Monokrom Netral (Black & Gray Standard)**: Seluruh teks hanya boleh menggunakan warna hitam (`#1e293b` / `#0f172a`) atau abu-abu netral (`#475569` / `#64748b`). Dilarang keras menggunakan warna font biru (`#0284c7`, `#0369a1`, dsb.).
      * **Standar Dilarang Background Color pada Teks (Zero Text Background Color Standard)**: Dilarang keras memberikan warna latar belakang (*background color*) pada teks—baik berupa badge/pill berwarna (`bg-blue-50`, `#f0f9ff`, `#f8fafc`), highlight teks, maupun sel tabel/kontainer yang diwarnai. Seluruh teks wajib diletakkan di atas latar belakang putih bersih (`#ffffff`) dengan garis pembatas/border tipis halus (`#e2e8f0` atau `#cbd5e1`).
      * **Foto Unit Hero Diperbesar (High-Impact Product Showcase)**: Gambar dispenser diperbesar (tinggi ~240–250px) agar tampil gagah dan jelas sebagai katalog produk profesional, dilengkapi bayangan kontak lantai halus (*floor contact shadow*) bersih tanpa teks label/tag yang mengganggu di bawahnya.
-     * **Kop Surat Resmi PT Noto Water Envirotech**: Garis aksen atas minimalis (`2.5px #1e293b`), tipografi CELIOL bold, sub-brand **Commercial Water Dispenser**, alamat kantor Rasuna Said Jakarta Selatan, email `sales@noto.asia`, nomor WhatsApp resmi, dan website `noto.asia`.
+     * **Kop Surat Resmi PT Noto Water Envirotech**: Garis aksen atas minimalis (`2.5px #1e293b`), tipografi CELIOL bold, sub-brand **Commercial Water Dispenser**, alamat kantor Rasuna Said Jakarta Selatan, email `sales@celiol.cloud`, nomor WhatsApp resmi, dan website `celiol.cloud`.
      * **Judul Dokumen Resmi**: Menggunakan judul lugas **LEMBAR SPESIFIKASI TEKNIS** (tanpa embel-embel "& estimasi pengadaan unit", dan tanpa subtitle Permenkes di baris judul).
      * **Tata Letak Bebas Cards (Zero-Card Standard)**: Menampilkan nama model, SKU resmi, seri, estimasi biaya beli resmi unit, dan paket pemeliharaan rutin Rp 500.000/bln dalam baris tipografi semantik yang bersih tanpa kartu/kotak pembungkus (zero cards).
      * **Tabel 1: Spesifikasi Parameter Teknis Lengkap**: Diambil langsung dari seluruh parameter teknis lengkap produk terkait (19 parameter teknis termasuk SKU, seri, material bodi, tangki SUS 304, dimensi, keran, custom suhu, kapasitas harian, debit air panas/dingin/normal, daya listrik, tegangan, filtrasi RO 0.0001 µm, sterilisasi UV-C LED, tombol kran presisi, standar mutu Permenkes No. 2/2023, serta skema pengadaan dan ketentuan biaya). Seluruh baris berlatar putih bersih (`#ffffff`), border 1px halus (`#e2e8f0`), dan pembagian font sesuai SOP (`font-heading` untuk label, `font-mono` untuk SKU, dimensi, daya watt, dan debit).
@@ -266,7 +266,7 @@ Setiap penambahan atau pembaruan unit produk baru wajib mengikuti skema objek be
    - Footer menggunakan grid 4 kolom (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8`):
      - Kolom 1 (Span 2): Deskripsi Perusahaan & Legalitas / Hak Cipta.
      - Kolom 2 (Span 1): Menu Navigasi Bersih (Beranda, Katalog Produk, Blog & Edukasi). Dilarang memasukkan tautan anchor segmen beranda (#teknologi, #contactRfq, #industri, #testimoni) dan tautan Portal Admin disembunyikan (*hidden*) dari publik.
-     - Kolom 3 (Span 1): Kontak Resmi (Telepon, Email sales@noto.asia, Alamat Kantor).
+     - Kolom 3 (Span 1): Kontak Resmi (Telepon, Email sales@celiol.cloud, Alamat Kantor).
 
 ---
 

@@ -698,7 +698,7 @@ function setupSeoLivePreview() {
     const slug = (slugInput?.value || '').trim() || 'judul-artikel-baru';
 
     if (previewTitle) previewTitle.textContent = `${rawTitle} | Celiol Commercial Dispenser`;
-    if (previewUrl) previewUrl.textContent = `https://celiol.co.id/blog/${slug}`;
+    if (previewUrl) previewUrl.textContent = `https://celiol.cloud/blog/${slug}`;
     if (previewDesc) previewDesc.textContent = rawDesc;
 
     if (titleCount) {
@@ -1349,7 +1349,7 @@ function applyQuickTopic(topicText) {
   }
 }
 
-const CELIOL_MASTER_PROMPT_TEMPLATE = `Anda adalah Senior Water Quality Educator, Environmental Health Specialist, & Technical SEO Content Strategist untuk Celiol Dispenser (PT Noto Water Envirotech - https://celiol.co.id).
+const CELIOL_MASTER_PROMPT_TEMPLATE = `Anda adalah Senior Water Quality Educator, Environmental Health Specialist, & Technical SEO Content Strategist untuk Celiol Dispenser (PT Noto Water Envirotech - https://celiol.cloud).
 
 Tugas Anda: Menulis artikel edukatif, berbobot ilmiah, berbasis rujukan media berita kredibel dan riset kesehatan terkini, dengan gaya penulisan informatif yang memiliki SEO HOOK kuat untuk merajai Halaman 1 Google SERP.
 

@@ -572,7 +572,7 @@ function openProductDetail(productId) {
                 <tr class="hover:bg-gray-50/50">
                   <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 font-heading align-top">24/7 Layanan Pelanggan Teknis</td>
                   <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-brand-700 font-medium align-top">24 Jam / 7 Hari (Respons Cepat)</td>
-                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-gray-700 align-top">Dukungan hotline prioritas tim teknis PT Noto Water Envirotech via WhatsApp dan surel resmi sales@noto.asia guna memastikan kelancaran operasional pasokan air minum fasilitas kantor.</td>
+                  <td class="px-3 sm:px-4 py-2.5 sm:py-3 text-gray-700 align-top">Dukungan hotline prioritas tim teknis PT Noto Water Envirotech via WhatsApp dan surel resmi sales@celiol.cloud guna memastikan kelancaran operasional pasokan air minum fasilitas kantor.</td>
                   <td class="px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-gray-900 align-top">Termasuk Paket Rp ${Number(product.monthlyMaintenancePrice || 500000).toLocaleString('id-ID')}/bln</td>
                 </tr>
               </tbody>
@@ -667,7 +667,7 @@ function generateDatasheetHtml(product) {
             <div style="text-align: right; font-size: 7.5pt; line-height: 1.35; color: #64748b; font-family: 'Inter', sans-serif;">
               <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 8.5pt; color: #1e293b; text-transform: uppercase;">PT NOTO WATER ENVIROTECH</div>
               <div>Jl. H. R. Rasuna Said Kav. 1, Jakarta Selatan 12980</div>
-              <div>Surel: <strong style="color: #1e293b;">sales@noto.asia</strong> &bull; Situs: <strong style="color: #1e293b;">noto.asia</strong> &bull; WA: <strong style="color: #1e293b;">+62 821-2098-8201</strong></div>
+              <div>Surel: <strong style="color: #1e293b;">sales@celiol.cloud</strong> &bull; Situs: <strong style="color: #1e293b;">celiol.cloud</strong> &bull; WA: <strong style="color: #1e293b;">+62 821-2098-8201</strong></div>
             </div>
           </div>
 
@@ -869,7 +869,7 @@ function generateDatasheetHtml(product) {
               <span style="font-family: 'JetBrains Mono', monospace; font-size: 7pt; color: #64748b;">(${product.modelCode})</span>
             </div>
             <div style="text-align: right; font-size: 7pt; color: #64748b; font-family: 'Inter', sans-serif;">
-              <strong style="color: #1e293b; font-family: 'Plus Jakarta Sans', sans-serif;">PT NOTO WATER ENVIROTECH</strong> &bull; sales@noto.asia
+              <strong style="color: #1e293b; font-family: 'Plus Jakarta Sans', sans-serif;">PT NOTO WATER ENVIROTECH</strong> &bull; sales@celiol.cloud
             </div>
           </div>
 
@@ -940,7 +940,7 @@ function generateDatasheetHtml(product) {
                 <tr style="background: #ffffff;">
                   <td style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #1e293b; background: #ffffff; padding: 3px 6px;">24/7 Layanan Pelanggan Teknis</td>
                   <td style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; color: #475569; background: #ffffff; padding: 3px 6px;">24 Jam / 7 Hari<br><span style="font-family: 'Inter', sans-serif; font-size: 5.8pt; color: #64748b; font-weight: normal;">(Respons Cepat)</span></td>
-                  <td style="color: #334155; background: #ffffff; padding: 3px 6px;">Dukungan hotline prioritas tim teknis PT Noto Water Envirotech via WhatsApp dan surel resmi sales@noto.asia guna menjamin ketersediaan air minum fasilitas secara berkelanjutan.</td>
+                  <td style="color: #334155; background: #ffffff; padding: 3px 6px;">Dukungan hotline prioritas tim teknis PT Noto Water Envirotech via WhatsApp dan surel resmi sales@celiol.cloud guna menjamin ketersediaan air minum fasilitas secara berkelanjutan.</td>
                   <td style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #1e293b; background: #ffffff; padding: 3px 6px;">Termasuk Paket</td>
                 </tr>
               </tbody>
@@ -960,7 +960,7 @@ function generateDatasheetHtml(product) {
 
         <!-- Footer Halaman 2 -->
         <div style="border-top: 1px solid #e2e8f0; padding-top: 5px; display: flex; justify-content: space-between; font-size: 6.5pt; color: #94a3af; margin-top: 6px; background: #ffffff; font-family: 'Inter', sans-serif;">
-          <div>PT Noto Water Envirotech &bull; Jl. H. R. Rasuna Said Kav. 1, Jakarta Selatan &bull; noto.asia</div>
+          <div>PT Noto Water Envirotech &bull; Jl. H. R. Rasuna Said Kav. 1, Jakarta Selatan &bull; celiol.cloud</div>
           <div>Halaman 2 dari 2</div>
         </div>
       </div>

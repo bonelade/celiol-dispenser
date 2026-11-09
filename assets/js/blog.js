@@ -185,7 +185,7 @@ function initArticleDetail() {
       "publisher": {
         "@type": "Organization",
         "name": "Celiol Commercial Water Dispenser",
-        "url": "https://celiol.co.id",
+        "url": "https://celiol.cloud",
         "logo": {
           "@type": "ImageObject",
           "url": "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=200&q=80"
@@ -201,13 +201,13 @@ function initArticleDetail() {
           "@type": "ListItem",
           "position": 1,
           "name": "Beranda",
-          "item": "https://celiol.co.id/index.html"
+          "item": "https://celiol.cloud/index.html"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Blog & Edukasi",
-          "item": "https://celiol.co.id/blog.html"
+          "item": "https://celiol.cloud/blog.html"
         },
         {
           "@type": "ListItem",

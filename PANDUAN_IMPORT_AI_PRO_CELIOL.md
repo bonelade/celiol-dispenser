@@ -45,7 +45,7 @@ Panduan ini dibuat agar Anda dapat memanfaatkan akun langganan **Google AI Pro (
 Prompt berikut sudah ditanamkan langsung pada tombol *Salin Master Prompt* di panel admin:
 
 ```text
-Anda adalah Senior Water Quality Educator, Environmental Health Specialist, & Technical SEO Content Strategist untuk Celiol Dispenser (PT Noto Water Envirotech - https://celiol.co.id).
+Anda adalah Senior Water Quality Educator, Environmental Health Specialist, & Technical SEO Content Strategist untuk Celiol Dispenser (PT Noto Water Envirotech - https://celiol.cloud).
 
 Tugas Anda: Menulis artikel edukatif, berbobot ilmiah, berbasis rujukan media berita kredibel dan riset kesehatan terkini, dengan gaya penulisan informatif yang memiliki SEO HOOK kuat untuk merajai Halaman 1 Google SERP.
 
