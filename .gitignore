@@ -1,0 +1,23 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
+
+# Temporary / Scratch
+scratch/
+tmp/

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artikel & SEO Content Management System | Celiol Admin</title>
+
+  <!-- Auth Guard (SOP Sec 4.1) -->
+  <script>
+    (function() {
+      var authKey = 'celiol_admin_auth';
+      var expectedAuth = 'authenticated_celiolsuksesselalu';
+      var isAuth = (sessionStorage.getItem(authKey) === expectedAuth) || (localStorage.getItem(authKey) === expectedAuth);
+      if (!isAuth) {
+        window.location.replace('login.html?redirect=' + encodeURIComponent(window.location.pathname.split('/').pop() || 'articles.html'));
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS & Preline UI CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#0a2540',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../assets/css/custom.css">
+
+  <!-- Lucide Icons & Preline Script -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/preline@2.7.0/dist/preline.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans">
+
+  <div class="min-h-screen flex flex-col lg:flex-row">
+    <!-- ================= PRELINE ADMIN SIDEBAR ================= -->
+    <aside class="w-full lg:w-64 bg-gray-900 text-gray-300 flex-shrink-0 flex flex-col justify-between p-4 lg:p-5 border-r border-gray-800">
+      <div>
+        <!-- Brand Header (With Mobile Toggle) -->
+        <div class="flex items-center justify-between pb-3 lg:pb-6 border-b border-gray-800 mb-3 lg:mb-6">
+          <a href="index.html" class="flex items-center gap-2.5 focus:outline-none">
+            <span class="text-lg font-black tracking-tight text-white font-heading">CELIOL</span>
+            <span class="h-3.5 w-px bg-gray-700"></span>
+            <span class="text-[10px] font-semibold tracking-wider uppercase text-brand-400">Admin</span>
+          </a>
+          <!-- Mobile Menu Hamburger Button -->
+          <button type="button" class="lg:hidden hs-collapse-toggle p-2 rounded-lg border border-gray-800 text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none" data-hs-collapse="#adminNavMenu" aria-controls="adminNavMenu" aria-label="Toggle Navigation">
+            <i data-lucide="menu" class="hs-collapse-open:hidden w-4 h-4"></i>
+            <i data-lucide="x" class="hs-collapse-open:block hidden w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Navigation Menu (Collapsible on Mobile) -->
+        <div id="adminNavMenu" class="hs-collapse hidden lg:block overflow-hidden transition-all duration-300">
+          <nav class="space-y-1 text-xs font-semibold">
+            <a href="index.html" class="flex items-center gap-x-3 py-2.5 px-3 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors font-heading">
+              <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+              <span>Dashboard Overview</span>
+            </a>
+            <a href="products.html" class="flex items-center gap-x-3 py-2.5 px-3 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors font-heading">
+              <i data-lucide="package" class="w-4 h-4"></i>
+              <span>Kelola Produk (CRUD)</span>
+            </a>
+            <a href="articles.html" class="flex items-center gap-x-3 py-2.5 px-3 rounded-xl bg-brand-600 text-white shadow-sm font-heading">
+              <i data-lucide="newspaper" class="w-4 h-4"></i>
+              <span>Artikel & SEO CMS</span>
+            </a>
+            
+            <div class="pt-5 pb-2 text-[10px] uppercase font-bold text-gray-500 tracking-wider font-heading">Halaman Publik (Live)</div>
+            <a href="../index.html" target="_blank" class="flex items-center justify-between py-2 px-3 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+              <span class="flex items-center gap-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Landing Page</span>
+              <span class="text-[10px] text-gray-500 font-mono">Live ↗</span>
+            </a>
+            <a href="../catalog.html" target="_blank" class="flex items-center justify-between py-2 px-3 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+              <span class="flex items-center gap-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Katalog Produk</span>
+              <span class="text-[10px] text-gray-500 font-mono">Live ↗</span>
+            </a>
+            <a href="../blog.html" target="_blank" class="flex items-center justify-between py-2 px-3 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition-colors">
+              <span class="flex items-center gap-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Blog & Edukasi</span>
+              <span class="text-[10px] text-gray-500 font-mono">Live ↗</span>
+            </a>
+          </nav>
+
+          <!-- Bottom Profile & Reset -->
+          <div class="pt-6 border-t border-gray-800 space-y-3 mt-6">
+            <button id="adminResetSeedBtn" class="w-full py-2 px-3 rounded-xl border border-gray-700 hover:border-gray-500 text-gray-400 hover:text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors font-heading">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              Reset Sample Database
+            </button>
+            <div class="flex items-center justify-between gap-2 px-2 pt-1 border-t border-gray-800/80">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-xs font-bold text-white shadow-sm font-heading shrink-0">
+                  AN
+                </div>
+                <div class="text-[11px] leading-tight min-w-0">
+                  <div class="text-white font-bold font-heading truncate">Albert Adi Nugraha</div>
+                  <div class="text-gray-400 text-[10px] truncate">Admin Fasilitas</div>
+                </div>
+              </div>
+              <button id="adminLogoutBtn" title="Keluar dari Admin" class="p-1.5 rounded-lg text-gray-400 hover:text-rose-400 hover:bg-gray-800 transition-colors shrink-0">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-10 max-w-7xl w-full overflow-x-hidden">
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="w-4 h-0.5 bg-brand-600"></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-600 font-heading">Manajemen Konten</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 font-heading">Publikasi Artikel & Manajemen SEO</h1>
+          <p class="text-xs sm:text-sm text-gray-500 mt-1">Buat konten edukasi, atur kata kunci pencarian (Focus Keyword), dan sematkan dispenser terkait untuk mendongkrak trafik organik Google.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button type="button" onclick="openAiImportModal()" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-xs font-semibold font-heading rounded-xl border border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 hover:border-brand-300 shadow-2xs transition-all">
+            <i data-lucide="sparkles" class="w-4 h-4 text-brand-600"></i>
+            <span>Import dari Google AI Pro</span>
+          </button>
+          <button type="button" onclick="openAddArticleModal()" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-xs font-semibold font-heading rounded-xl bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-all">
+            <i data-lucide="pen-tool" class="w-4 h-4"></i>
+            <span>Tulis Manual</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Toolbar -->
+      <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="w-full sm:w-96 relative">
+          <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-gray-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </span>
+          <input type="text" id="adminArticleSearch" placeholder="Cari judul artikel, topik, atau kata kunci..." class="py-2 ps-9 pe-3 block w-full border border-gray-200 rounded-xl text-xs focus:border-brand-600 focus:ring-brand-600 bg-gray-50/50">
+        </div>
+        <div class="text-xs text-gray-400 hidden sm:flex items-center gap-1.5 font-heading">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-600"></i>
+          <span>Auto Google Search Snippet Preview Aktif</span>
+        </div>
+      </div>
+
+      <!-- Preline Data Table -->
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table id="adminArticlesTable" class="min-w-full divide-y divide-gray-200 text-start">
+            <thead class="bg-gray-50/80 text-gray-500 text-[11px] uppercase font-bold tracking-wider font-heading">
+              <tr>
+                <th class="px-6 py-3.5 text-left">Judul Artikel & Slug</th>
+                <th class="px-6 py-3.5 text-left">Kategori Topik</th>
+                <th class="px-6 py-3.5 text-left">Focus Keyword</th>
+                <th class="px-6 py-3.5 text-left">Tanggal Rilis</th>
+                <th class="px-6 py-3.5 text-left">Status</th>
+                <th class="px-6 py-3.5 text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="adminArticlesTableBody" class="divide-y divide-gray-200 text-xs">
+              <!-- Injected by assets/js/admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ================= PRELINE MODAL: EDITOR ARTIKEL & SEO CMS ================= -->
+  <div id="articleModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-gray-900/60 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center">
+    <div class="bg-white rounded-2xl sm:rounded-3xl max-w-4xl w-full p-5 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto border border-gray-200">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
+        <div>
+          <h3 id="articleModalTitle" class="text-xl font-bold text-gray-900 font-heading">Tulis Artikel Baru</h3>
+          <p class="text-xs text-gray-500 mt-0.5">Lengkapi konten edukasi dan optimasi parameter SEO Google untuk mendominasi kata kunci pencarian.</p>
+        </div>
+        <button onclick="closeArticleModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="articleForm" class="space-y-6 text-xs">
+        <!-- Section 1: Konten Utama -->
+        <div>
+          <h4 class="font-bold text-gray-900 uppercase tracking-wider mb-3 text-[11px] flex items-center gap-1.5 text-brand-700 font-heading">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> 1. Konten Utama Artikel
+          </h4>
+          <div class="grid sm:grid-cols-3 gap-4 mb-4">
+            <div class="sm:col-span-2">
+              <label class="font-semibold text-gray-700 block mb-1">Judul Artikel *</label>
+              <input type="text" id="artTitle" required placeholder="Panduan Efisiensi Sistem Air Minum Fasilitas Perkantoran" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl focus:border-brand-600 focus:ring-brand-600 font-semibold text-sm">
+            </div>
+            <div>
+              <label class="font-semibold text-gray-700 block mb-1">Kategori Topik</label>
+              <select id="artCategory" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl bg-white focus:border-brand-600 focus:ring-brand-600 font-heading">
+                <option value="Sanitasi & Higienitas">Sanitasi & Higienitas</option>
+                <option value="Teknologi Filtrasi">Teknologi Filtrasi</option>
+                <option value="Kualitas Air & Regulasi">Kualitas Air & Regulasi</option>
+                <option value="Kesehatan & Hidrasi">Kesehatan & Hidrasi</option>
+                <option value="Studi Kasus Fasilitas">Studi Kasus Fasilitas</option>
+                <option value="Efisiensi Biaya">Efisiensi Biaya</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="font-semibold text-gray-700 block mb-1">Slug URL (Permalink) *</label>
+            <div class="flex items-center">
+              <span class="px-3 py-2 bg-gray-100 border border-e-0 border-gray-300 rounded-s-xl text-gray-500 text-[11px] font-mono">/blog/</span>
+              <input type="text" id="artSlug" required placeholder="judul-artikel-anda" class="py-2 px-3 block w-full border border-gray-300 rounded-e-xl text-gray-800 focus:border-brand-600 focus:ring-brand-600 font-mono">
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="font-semibold text-gray-700 block mb-1">Excerpt / Ringkasan Singkat (Intisari artikel untuk preview)</label>
+            <textarea id="artExcerpt" rows="2" placeholder="Tuliskan ringkasan 1-2 kalimat yang menarik calon pembaca..." class="py-2 px-3.5 block w-full border border-gray-300 rounded-xl focus:border-brand-600 focus:ring-brand-600 leading-relaxed"></textarea>
+          </div>
+
+          <div class="mb-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1.5">
+              <label class="font-semibold text-gray-700 block">Isi Konten Artikel (Format HTML & Teks Otomatis) *</label>
+              <button type="button" onclick="autoFormatArticleContent()" class="py-1 px-3 inline-flex items-center gap-1.5 text-xs font-bold rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 shadow-2xs transition-all font-heading shrink-0" title="Rapikan jeda baris, paragraf p, sub-judul h2, dan nomor urut ol secara instan">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-600"></i>
+                <span>Rapikan Jeda & Spasi Otomatis</span>
+              </button>
+            </div>
+            <textarea id="artContent" rows="8" required placeholder="<p class=&quot;mb-5 leading-relaxed&quot;>Tulis atau tempel paragraf artikel Anda di sini...</p>&#10;&#10;<h2>Sub-judul Artikel</h2>&#10;&#10;<p class=&quot;mb-5 leading-relaxed&quot;>Penjelasan detail...</p>" class="py-2.5 px-3.5 block w-full border border-gray-300 rounded-xl font-mono text-xs leading-relaxed focus:border-brand-600 focus:ring-brand-600"></textarea>
+            <p class="text-[11px] text-gray-500 mt-1.5 flex items-center gap-1">
+              <i data-lucide="info" class="w-3.5 h-3.5 text-brand-600 shrink-0"></i>
+              <span>Tips: Jika menyalin langsung dari Gemini / Google AI Pro, klik tombol <strong>"Rapikan Jeda & Spasi Otomatis"</strong> di atas agar paragraf, sub-judul, dan nomor list langsung tertata rapi tanpa menumpuk.</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Section 2: Media & Penulis -->
+        <div class="pt-4 border-t border-gray-100">
+          <h4 class="font-bold text-gray-900 uppercase tracking-wider mb-3 text-[11px] flex items-center gap-1.5 text-brand-700 font-heading">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i> 2. Media Gambar & Profil Penulis
+          </h4>
+          <div class="grid sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="font-semibold text-gray-700 block mb-1">URL Foto Utama</label>
+              <input type="url" id="artImage" placeholder="https://images.unsplash.com/..." class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl focus:border-brand-600 focus:ring-brand-600">
+            </div>
+            <div>
+              <label class="font-semibold text-gray-700 block mb-1">Alt Text Gambar (Wajib untuk SEO Gambar Google)</label>
+              <input type="text" id="artImageAlt" placeholder="Dispenser air minum tanpa galon di ruang kerja pantri" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl focus:border-brand-600 focus:ring-brand-600">
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-3 gap-4">
+            <div>
+              <label class="font-semibold text-gray-700 block mb-1">Nama Penulis</label>
+              <input type="text" id="artAuthorName" value="Albert Adi Nugraha" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl focus:border-brand-600 focus:ring-brand-600">
+            </div>
+            <div>
+              <label class="font-semibold text-gray-700 block mb-1">Jabatan Penulis</label>
+              <input type="text" id="artAuthorRole" value="Commercial Water Solution Specialist" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl focus:border-brand-600 focus:ring-brand-600">
+            </div>
+            <div>
+              <label class="font-semibold text-gray-700 block mb-1">Estimasi Waktu Baca (Menit)</label>
+              <input type="number" id="artReadTime" value="5" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl focus:border-brand-600 focus:ring-brand-600">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Panel SEO & Google Live Snippet -->
+        <div class="pt-4 border-t border-gray-100 bg-gray-50/80 p-5 rounded-2xl border border-gray-200">
+          <h4 class="font-bold text-gray-900 uppercase tracking-wider mb-3 text-[11px] flex items-center gap-1.5 text-brand-700 font-heading">
+            <i data-lucide="globe" class="w-3.5 h-3.5"></i> 3. Panel Optimasi SEO & Google SERP Preview
+          </h4>
+
+          <div class="mb-4">
+            <label class="font-semibold text-gray-700 block mb-1">Focus Keyword (Kata Kunci Utama Target)</label>
+            <input type="text" id="artFocusKeyword" placeholder="dispenser kantor komersial, efisiensi biaya air minum" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl bg-white focus:border-brand-600 focus:ring-brand-600">
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="font-semibold text-gray-700">SEO Meta Title</label>
+                <span id="seoTitleCount" class="text-[11px] text-gray-400 font-mono">0/60 karakter</span>
+              </div>
+              <input type="text" id="artMetaTitle" placeholder="Judul yang tampil di halaman hasil pencarian Google" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl bg-white focus:border-brand-600 focus:ring-brand-600">
+            </div>
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="font-semibold text-gray-700">SEO Meta Description</label>
+                <span id="seoDescCount" class="text-[11px] text-gray-400 font-mono">0/160 karakter</span>
+              </div>
+              <input type="text" id="artMetaDesc" placeholder="Deskripsi ringkas yang membujuk pencari mengklik tautan" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl bg-white focus:border-brand-600 focus:ring-brand-600">
+            </div>
+          </div>
+
+          <!-- Google Search Snippet Preview Box & Device Switcher -->
+          <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="text-[10px] uppercase font-bold text-gray-400 flex items-center gap-1.5 font-heading">
+                <i data-lucide="eye" class="w-3.5 h-3.5 text-brand-600"></i> Google SERP Live Snippet Preview
+              </div>
+              <!-- Desktop / Mobile Toggle -->
+              <div class="flex items-center bg-gray-100 p-0.5 rounded-lg text-[10px] font-semibold text-gray-600">
+                <button type="button" id="serpPreviewDesktopBtn" onclick="setSerpDevice('desktop')" class="py-1 px-2.5 rounded-md bg-white text-gray-900 shadow-2xs font-heading">
+                  <i data-lucide="monitor" class="w-3 h-3 inline-block -mt-0.5 me-1"></i> Desktop
+                </button>
+                <button type="button" id="serpPreviewMobileBtn" onclick="setSerpDevice('mobile')" class="py-1 px-2.5 rounded-md hover:text-gray-900 transition-colors font-heading">
+                  <i data-lucide="smartphone" class="w-3 h-3 inline-block -mt-0.5 me-1"></i> Mobile
+                </button>
+              </div>
+            </div>
+
+            <!-- Preview Wrapper (Adapts on Desktop/Mobile toggle) -->
+            <div id="serpPreviewContainer" class="p-3 bg-white rounded-lg border border-gray-100 transition-all">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2 text-xs text-gray-500 font-mono">
+                  <span class="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center text-[10px]">🌐</span>
+                  <span id="googlePreviewUrl" class="truncate text-[11px]">https://celiol.co.id/blog/</span>
+                </div>
+                <div id="googlePreviewTitle" class="text-base font-medium text-blue-700 hover:underline cursor-pointer line-clamp-1 font-heading">
+                  Judul Artikel SEO Anda | Celiol Commercial Dispenser
+                </div>
+                <p id="googlePreviewDesc" class="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+                  Deskripsi meta ringkas artikel Anda yang akan menarik calon klien mengklik tautan di mesin pencari Google.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live On-Page SEO & Hook Audit Scorecard -->
+          <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h5 class="text-xs font-bold text-gray-900 font-heading">Analisis SEO & Hook Edukasi Real-time</h5>
+                  <p class="text-[10px] text-gray-400">Audit otomatis kesiapan artikel menempati Halaman 1 Google</p>
+                </div>
+              </div>
+              <div class="text-end">
+                <span id="seoOverallScoreBadge" class="inline-block py-1 px-2.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 font-heading">
+                  100/100 · Sangat Optimal
+                </span>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+              <div id="seoScoreBar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-300" style="width: 100%;"></div>
+            </div>
+
+            <!-- Checklist Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px]">
+              <div id="auditKeywordTitle" class="flex items-center gap-2 text-gray-700">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                <span>Keyword ada di Judul H1</span>
+              </div>
+              <div id="auditKeywordSlug" class="flex items-center gap-2 text-gray-700">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                <span>Keyword ada di Permalink Slug</span>
+              </div>
+              <div id="auditKeywordDesc" class="flex items-center gap-2 text-gray-700">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                <span>Keyword ada di Meta Deskripsi</span>
+              </div>
+              <div id="auditDescLength" class="flex items-center gap-2 text-gray-700">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                <span>Panjang Meta Desc Ideal (120-160 char)</span>
+              </div>
+              <div id="auditHeadings" class="flex items-center gap-2 text-gray-700">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                <span>Struktur Heading Sub-judul (&lt;h2&gt;) Ada</span>
+              </div>
+              <div id="auditEducationFormat" class="flex items-center gap-2 text-gray-700">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                <span>Format Edukasi: List / Tabel / FAQ Terdeteksi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Rich Snippets Input (Optional / Auto-filled by AI) -->
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="flex items-center justify-between mb-1">
+              <label class="font-semibold text-gray-700 flex items-center gap-1.5 font-heading">
+                <i data-lucide="help-circle" class="w-3.5 h-3.5 text-brand-600"></i>
+                <span>Pertanyaan Umum (FAQ) untuk Google Rich Snippet</span>
+              </label>
+              <span class="text-[10px] text-brand-700 font-mono">Format JSON atau 1 Baris per Q&A</span>
+            </div>
+            <textarea id="artFaqs" rows="3" placeholder="Pertanyaan 1? | Jawaban 1&#10;Pertanyaan 2? | Jawaban 2" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl bg-white font-mono text-xs focus:border-brand-600 focus:ring-brand-600 leading-relaxed"></textarea>
+            <p class="text-[10px] text-gray-400 mt-1">Dihasilkan otomatis saat Import dari AI. Ditampilkan sebagai accordion interaktif dan skema Google FAQPage.</p>
+          </div>
+
+          <!-- Related Products Checkboxes -->
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <label class="font-semibold text-gray-700 block mb-2 font-heading">
+              Sematkan Model Dispenser Terkait (Muncul di Sidebar Artikel):
+            </label>
+            <div id="artRelatedProductsContainer" class="grid sm:grid-cols-2 gap-2">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <div class="mt-4 pt-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex-1 min-w-[200px]">
+              <label class="font-semibold text-gray-700 block mb-1">Tags (Pisahkan dengan koma)</label>
+              <input type="text" id="artTags" placeholder="dispenser kantor, hemat biaya, uv-c" class="py-2.5 px-3 block w-full border border-gray-300 rounded-xl bg-white focus:border-brand-600 focus:ring-brand-600">
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="font-semibold text-gray-700">Status Artikel:</label>
+              <select id="artStatus" class="py-2 px-3 block border border-gray-300 rounded-xl bg-white font-bold text-brand-800 focus:border-brand-600 focus:ring-brand-600 font-heading">
+                <option value="published">Terbit (Live Publik)</option>
+                <option value="draft">Draft (Simpan Sementara)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-gray-200 flex items-center justify-end gap-3">
+          <button type="button" onclick="closeArticleModal()" class="py-2.5 px-5 inline-flex items-center text-xs font-semibold font-heading rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">
+            Batal
+          </button>
+          <button type="submit" class="py-2.5 px-6 inline-flex items-center gap-x-2 text-xs font-semibold font-heading rounded-xl border border-transparent bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-all">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            Publikasikan Artikel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= PRELINE MODAL: DETAIL LENGKAP ARTIKEL & SEO ================= -->
+  <div id="articleDetailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-gray-900/60 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center">
+    <div class="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full p-5 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto border border-gray-200">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-200 mb-5">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 font-heading">Rincian Konten & Analisis SEO</span>
+          <h3 id="articleDetailModalTitle" class="text-xl font-bold text-gray-900 font-heading">Detail Lengkap Artikel</h3>
+        </div>
+        <button onclick="closeArticleDetailModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div id="articleDetailContent" class="space-y-5 text-xs">
+        <!-- Injected dynamically by admin.js -->
+      </div>
+
+      <div class="pt-5 mt-6 border-t border-gray-200 flex items-center justify-between gap-3">
+        <button id="articleDetailEditBtn" type="button" class="py-2.5 px-5 inline-flex items-center gap-1.5 text-xs font-semibold font-heading rounded-xl bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-all">
+          <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+          Edit Artikel Ini
+        </button>
+        <button type="button" onclick="closeArticleDetailModal()" class="py-2.5 px-5 inline-flex items-center text-xs font-semibold font-heading rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PRELINE MODAL: IMPORT GOOGLE AI PRO (GEMINI) ================= -->
+  <div id="aiImportModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-gray-900/60 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center">
+    <div class="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full p-5 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto border border-gray-200">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-200 mb-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600 shadow-2xs">
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-gray-900 font-heading">Import Konten dari Google AI Pro (Gemini)</h3>
+            <p class="text-xs text-gray-500 mt-0.5">Manfaatkan akun Google AI Pro Anda untuk menulis artikel SEO otomatis tanpa biaya token tambahan.</p>
+          </div>
+        </div>
+        <button onclick="closeAiImportModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Panduan Cepat 3 Langkah -->
+      <div class="bg-gray-50/80 rounded-2xl p-4 border border-gray-200 mb-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-brand-700 font-heading flex items-center gap-1.5">
+            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+            Cara Menggunakan Akun Google AI Pro Anda:
+          </span>
+          <button type="button" onclick="copyMasterPrompt()" id="copyPromptBtn" class="py-1.5 px-3 inline-flex items-center gap-1.5 text-xs font-bold rounded-xl bg-gray-900 hover:bg-gray-800 text-white shadow-xs transition-all font-heading shrink-0">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Salin Master Prompt</span>
+          </button>
+        </div>
+        <ol class="text-xs text-gray-600 space-y-1.5 list-decimal list-inside leading-relaxed">
+          <li>Klik tombol <strong>"Salin Master Prompt"</strong> di atas (atau pilih rekomendasi topik di bawah).</li>
+          <li>Buka <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="text-brand-600 font-semibold hover:underline inline-flex items-center gap-0.5">gemini.google.com <i data-lucide="external-link" class="w-3 h-3"></i></a> dengan akun Google AI Pro Anda, tempel prompt tersebut, lalu ketik topik artikel yang ingin Anda bahas.</li>
+          <li>Salin jawaban dari Gemini, lalu tempelkan ke kolom di bawah ini dan klik <strong>"Proses & Masukkan ke Editor"</strong>.</li>
+        </ol>
+      </div>
+
+      <!-- Quick Topic Selector for Hook Ideas -->
+      <div class="mb-4 p-3.5 rounded-xl border border-brand-100 bg-brand-50/50">
+        <label for="quickTopicSelect" class="font-bold text-gray-900 block mb-1 text-xs font-heading flex items-center justify-between">
+          <span class="flex items-center gap-1.5 text-brand-800">
+            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-brand-600"></i>
+            Pilih Ide Topik Edukatif Populer (Auto-Embed ke Prompt):
+          </span>
+          <span class="text-[10px] text-brand-600 font-normal">Klik untuk langsung pasang topik</span>
+        </label>
+        <select id="quickTopicSelect" onchange="applyQuickTopic(this.value)" class="py-2 px-3 block w-full border border-gray-300 rounded-xl bg-white text-xs text-gray-800 focus:border-brand-600 focus:ring-brand-600 font-heading">
+          <option value="">-- Pilih Topik Siap Pakai yang Dicari Banyak Calon Klien --</option>
+          <option value="Fakta Ilmiah Bahaya Mikroplastik pada Air Minum Kemasan & Solusi Filtrasi Reverse Osmosis 0.0001 Mikron">1. Bahaya Mikroplastik pada Air Minum & Solusi Membran RO 0.0001 µm (Riset & Berita)</option>
+          <option value="Implementasi Standar Baku Mutu Air Minum Permenkes No. 2 Tahun 2023 pada Gedung & Fasilitas Komersial">2. Standar Baku Mutu Permenkes No. 2/2023: Fisik, Kimia & Mikrobiologi (Regulasi Kemenkes)</option>
+          <option value="Mengenal Biofilm pada Jalur Keran Dispenser & Keunggulan Tangki Stainless Steel SUS 304 Food-Grade">3. Ancaman Biofilm pada Keran Dispenser & Keunggulan Tangki SUS 304 (Sanitasi & Higienitas)</option>
+          <option value="Perbandingan Efektivitas Membran Reverse Osmosis 0.0001 Mikron vs Filtrasi Konvensional Menurut Kajian WHO">4. Komparasi RO 0.0001 Mikron vs Filter Konvensional menurut Kajian WHO (Sains Pemurnian)</option>
+          <option value="Pengaruh Kualitas Air Minum dan Hidrasi Terhadap Fokus serta Kesehatan Pengguna Fasilitas Modern">5. Pentingnya Kualitas Hidrasi untuk Kesehatan & Produktivitas di Ruang Kerja (Kesehatan & Kebugaran)</option>
+        </select>
+      </div>
+
+      <!-- Textarea Input -->
+      <div class="space-y-4 text-xs">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label for="aiImportInput" class="font-semibold text-gray-700">
+              Tempelkan Hasil Teks / JSON dari Gemini: *
+            </label>
+            <span class="text-[11px] text-gray-400 font-mono">Format JSON atau Teks Berlabel Didukung</span>
+          </div>
+          <textarea id="aiImportInput" rows="9" placeholder="Tempelkan hasil teks dari Google AI Pro di sini...&#10;Contoh:&#10;{&#10;  &quot;title&quot;: &quot;Panduan Efisiensi Air Minum Kantor&quot;,&#10;  &quot;slug&quot;: &quot;panduan-efisiensi-air-minum-kantor&quot;,&#10;  ...&#10;}" class="py-3 px-3.5 block w-full border border-gray-300 rounded-xl font-mono text-xs focus:border-brand-600 focus:ring-brand-600 leading-relaxed"></textarea>
+        </div>
+
+        <div id="aiImportErrorMsg" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-medium text-xs flex items-center gap-2">
+          <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+          <span id="aiImportErrorText">Format teks tidak valid. Pastikan Anda menyalin seluruh jawaban dari Gemini.</span>
+        </div>
+      </div>
+
+      <div class="pt-5 mt-6 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3">
+        <button type="button" onclick="closeAiImportModal()" class="py-2.5 px-5 inline-flex items-center text-xs font-semibold font-heading rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">
+          Batal
+        </button>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button type="button" onclick="processAiImport(false)" class="py-2.5 px-4 inline-flex items-center gap-1.5 text-xs font-semibold font-heading rounded-xl border border-brand-300 bg-brand-50 text-brand-700 hover:bg-brand-100 transition-all shadow-2xs">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            Proses & Buka di Editor
+          </button>
+          <button type="button" onclick="processAiImport(true)" class="py-2.5 px-5 inline-flex items-center gap-1.5 text-xs font-semibold font-heading rounded-xl bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition-all">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            Proses & Langsung Terbitkan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      if (window.HSStaticMethods) {
+        window.HSStaticMethods.autoInit();
+      }
+    });
+  </script>
+</body>
+</html>

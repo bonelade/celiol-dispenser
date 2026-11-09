@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Portal Admin | Celiol Commercial Dispenser</title>
+
+  <!-- Immediate Auth Check: if already logged in, redirect to dashboard -->
+  <script>
+    (function() {
+      var authKey = 'celiol_admin_auth';
+      var expectedAuth = 'authenticated_celiolsuksesselalu';
+      var isAuth = (sessionStorage.getItem(authKey) === expectedAuth) || (localStorage.getItem(authKey) === expectedAuth);
+      if (isAuth) {
+        var params = new URLSearchParams(window.location.search);
+        var redirect = params.get('redirect') || 'index.html';
+        window.location.replace(redirect);
+      }
+    })();
+  </script>
+
+  <!-- Tailwind CSS & Preline UI CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+              900: '#0a2540',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../assets/css/custom.css">
+
+  <!-- Lucide Icons & Preline Script -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/preline@2.7.0/dist/preline.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+  <!-- Main Login Screen Container -->
+  <div class="flex-1 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md text-center px-4">
+      <!-- Brand Logo / Wordmark -->
+      <a href="../index.html" class="inline-flex items-center gap-2.5 group focus:outline-none">
+        <span class="text-2xl font-black tracking-tight text-gray-900 font-heading">CELIOL</span>
+        <span class="h-4 w-px bg-gray-300"></span>
+        <span class="text-xs font-semibold tracking-wider uppercase text-brand-600 font-heading">
+          Admin Portal
+        </span>
+      </a>
+    </div>
+
+    <!-- Login Card -->
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+      <div class="bg-white py-8 px-6 sm:px-10 shadow-xs border border-gray-200/90 rounded-2xl">
+        <form id="adminLoginForm" class="space-y-5" novalidate>
+          <div>
+            <label for="adminPassword" class="block text-xs font-bold text-gray-700 mb-1.5 font-heading">
+              Kata Sandi Akses (Password)
+            </label>
+            <div class="relative">
+              <input type="password" id="adminPassword" required placeholder="Masukkan kata sandi..." autocomplete="current-password"
+                class="py-2.5 px-3.5 pe-11 block w-full border border-gray-300 rounded-xl text-sm focus:border-brand-600 focus:ring-1 focus:ring-brand-600 outline-none transition-colors">
+              
+              <!-- Toggle Visibility Button -->
+              <button type="button" id="togglePasswordBtn" title="Lihat Kata Sandi" class="absolute inset-y-0 end-0 flex items-center pe-3.5 text-gray-400 hover:text-gray-600 focus:outline-none">
+                <i data-lucide="eye" id="togglePasswordIcon" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Error Message Alert -->
+            <div id="passwordErrorBox" class="hidden mt-2 p-2.5 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-700 text-xs flex items-center gap-2 animate-shake">
+              <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0"></i>
+              <span id="passwordErrorText">Kata sandi salah. Silakan coba lagi.</span>
+            </div>
+          </div>
+
+          <!-- Remember Me Checkbox -->
+          <div class="flex items-center justify-between text-xs">
+            <label class="flex items-center gap-2 cursor-pointer select-none text-gray-600 hover:text-gray-900 transition-colors">
+              <input type="checkbox" id="rememberMeCheckbox" checked class="rounded border-gray-300 text-brand-600 focus:ring-brand-600 w-4 h-4">
+              <span>Ingat sesi masuk di perangkat ini</span>
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <div>
+            <button type="submit" id="submitLoginBtn" class="w-full py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-xs font-bold rounded-xl bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 transition-all shadow-xs font-heading">
+              <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+              <span>Masuk ke Dashboard</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-6 pt-5 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+          <a href="../index.html" class="inline-flex items-center gap-1.5 hover:text-brand-600 transition-colors">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Kembali ke Beranda</span>
+          </a>
+          <span class="text-[11px] text-gray-400">PT Noto Water Envirotech</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Info -->
+  <footer class="py-4 text-center text-[11px] text-gray-400">
+    © 2026 CELIOL Commercial Dispenser — Sistem Manajemen Fasilitas
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      const form = document.getElementById('adminLoginForm');
+      const passwordInput = document.getElementById('adminPassword');
+      const toggleBtn = document.getElementById('togglePasswordBtn');
+      const errorBox = document.getElementById('passwordErrorBox');
+      const errorText = document.getElementById('passwordErrorText');
+      const rememberCheckbox = document.getElementById('rememberMeCheckbox');
+      const submitBtn = document.getElementById('submitLoginBtn');
+
+      // Password visibility toggle
+      toggleBtn.addEventListener('click', function() {
+        const isPassword = passwordInput.getAttribute('type') === 'password';
+        passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+        
+        // Re-render icon
+        const iconName = isPassword ? 'eye-off' : 'eye';
+        toggleBtn.innerHTML = `<i data-lucide="${iconName}" class="w-4 h-4"></i>`;
+        if (window.lucide) lucide.createIcons();
+      });
+
+      // Form submission
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const enteredPassword = passwordInput.value.trim();
+
+        if (!enteredPassword) {
+          showError('Silakan masukkan kata sandi terlebih dahulu.');
+          passwordInput.focus();
+          return;
+        }
+
+        // Expected official password
+        const EXPECTED_PASSWORD = 'celiolsuksesselalu';
+        const AUTH_TOKEN = 'authenticated_celiolsuksesselalu';
+
+        if (enteredPassword === EXPECTED_PASSWORD) {
+          // Success
+          errorBox.classList.add('hidden');
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = `
+            <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i>
+            <span>Mengautentikasi...</span>
+          `;
+          if (window.lucide) lucide.createIcons();
+
+          // Store auth token in sessionStorage always
+          sessionStorage.setItem('celiol_admin_auth', AUTH_TOKEN);
+
+          // Store in localStorage if remember me is checked
+          if (rememberCheckbox.checked) {
+            localStorage.setItem('celiol_admin_auth', AUTH_TOKEN);
+          } else {
+            localStorage.removeItem('celiol_admin_auth');
+          }
+
+          // Determine redirect destination
+          const params = new URLSearchParams(window.location.search);
+          const redirect = params.get('redirect') || 'index.html';
+
+          // Sanitize redirect: avoid loop or external open redirect
+          const safeRedirect = (redirect.includes('login.html') || redirect.startsWith('http')) ? 'index.html' : redirect;
+
+          setTimeout(() => {
+            window.location.replace(safeRedirect);
+          }, 300);
+        } else {
+          // Failed
+          showError('Kata sandi tidak sesuai. Silakan coba lagi.');
+          passwordInput.value = '';
+          passwordInput.classList.add('border-rose-500', 'ring-1', 'ring-rose-500');
+          passwordInput.focus();
+        }
+      });
+
+      function showError(msg) {
+        errorText.textContent = msg;
+        errorBox.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+      }
+
+      passwordInput.addEventListener('input', function() {
+        passwordInput.classList.remove('border-rose-500', 'ring-1', 'ring-rose-500');
+        errorBox.classList.add('hidden');
+      });
+    });
+  </script>
+</body>
+</html>
