@@ -94,8 +94,8 @@
   </div>
 
   <!-- ================= PRELINE FACETED FILTER + CATALOG GRID ================= -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex-1 w-full">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex-1 w-full overflow-hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start w-full min-w-0">
       
       <!-- ================= SIDEBAR FILTERS ================= -->
       <aside id="catalogSidebarFilters" class="hs-collapse hidden lg:block lg:col-span-3 bg-white rounded-2xl border border-gray-200 p-4 sm:p-6 shadow-sm space-y-5 sm:space-y-6 sticky top-24 w-full">
@@ -155,38 +155,42 @@
       </aside>
 
       <!-- ================= MAIN PRODUCTS GRID ================= -->
-      <section class="lg:col-span-9 space-y-4 sm:space-y-5">
+      <section class="lg:col-span-9 space-y-4 sm:space-y-5 w-full min-w-0 overflow-hidden">
         <!-- Quick Series Filter Pills (Scrollable on Mobile) -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5" id="seriesPillsContainer">
-          <button type="button" onclick="setSeriesPillFilter('all')" data-series-pill="all" class="series-pill active py-2 px-3.5 rounded-xl text-xs font-bold transition-all shrink-0 bg-brand-600 text-white shadow-sm font-heading">
-            Semua Model
-          </button>
-          <button type="button" onclick="setSeriesPillFilter('Deluxe')" data-series-pill="Deluxe" class="series-pill py-2 px-3.5 rounded-xl text-xs font-medium transition-all shrink-0 bg-white border border-gray-200 text-gray-700 hover:border-brand-600 hover:text-brand-600 font-heading">
-            Deluxe Facility (Stainless Steel)
-          </button>
-          <button type="button" onclick="setSeriesPillFilter('Ultimate')" data-series-pill="Ultimate" class="series-pill py-2 px-3.5 rounded-xl text-xs font-medium transition-all shrink-0 bg-white border border-gray-200 text-gray-700 hover:border-brand-600 hover:text-brand-600 font-heading">
-            Ultimate Facility (Lacquered Glass)
-          </button>
+        <div class="w-full min-w-0 overflow-x-auto no-scrollbar py-1" id="seriesPillsContainer">
+          <div class="flex items-center gap-2 w-max pb-0.5">
+            <button type="button" onclick="setSeriesPillFilter('all')" data-series-pill="all" class="series-pill active py-2 px-3.5 rounded-xl text-xs font-bold transition-all shrink-0 bg-brand-600 text-white shadow-sm font-heading whitespace-nowrap">
+              Semua Model
+            </button>
+            <button type="button" onclick="setSeriesPillFilter('Deluxe')" data-series-pill="Deluxe" class="series-pill py-2 px-3.5 rounded-xl text-xs font-medium transition-all shrink-0 bg-white border border-gray-200 text-gray-700 hover:border-brand-600 hover:text-brand-600 font-heading whitespace-nowrap">
+              Deluxe Facility (Stainless Steel)
+            </button>
+            <button type="button" onclick="setSeriesPillFilter('Ultimate')" data-series-pill="Ultimate" class="series-pill py-2 px-3.5 rounded-xl text-xs font-medium transition-all shrink-0 bg-white border border-gray-200 text-gray-700 hover:border-brand-600 hover:text-brand-600 font-heading whitespace-nowrap">
+              Ultimate Facility (Lacquered Glass)
+            </button>
+          </div>
         </div>
 
         <!-- Top Toolbar -->
-        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-gray-200 flex items-center justify-between lg:justify-end gap-3 shadow-sm">
-          <!-- Mobile Filter Toggle Button -->
-          <button type="button" class="lg:hidden hs-collapse-toggle py-2 px-3 inline-flex items-center gap-x-2 text-xs font-semibold rounded-xl border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors font-heading shrink-0" data-hs-collapse="#catalogSidebarFilters" aria-controls="catalogSidebarFilters">
-            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-brand-600"></i>
-            <span>Filter Spesifikasi</span>
-            <span id="activeFilterBadge" class="hidden w-2 h-2 rounded-full bg-brand-600"></span>
-          </button>
-          
-          <div class="flex items-center justify-end gap-2 text-xs">
-            <label for="catalogSort" class="text-gray-500 font-semibold font-heading whitespace-nowrap shrink-0">Urutkan:</label>
-            <select id="catalogSort" class="py-1.5 px-3 block border border-gray-200 rounded-lg text-xs font-medium focus:border-brand-600 focus:ring-brand-600 bg-gray-50">
-              <option value="featured">Model Unggulan (Pilihan)</option>
-              <option value="price-asc">Harga Terendah</option>
-              <option value="price-desc">Harga Tertinggi</option>
-              <option value="capacity-high">Kapasitas Pendinginan Tertinggi</option>
-              <option value="name-asc">Nama Model (A - Z)</option>
-            </select>
+        <div class="bg-white p-3 sm:p-4 rounded-2xl border border-gray-200 shadow-sm w-full min-w-0">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4">
+            <!-- Mobile Filter Toggle Button -->
+            <button type="button" class="lg:hidden hs-collapse-toggle w-full sm:w-auto py-2.5 px-3.5 inline-flex items-center justify-center gap-x-2 text-xs font-semibold rounded-xl border border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors font-heading shrink-0" data-hs-collapse="#catalogSidebarFilters" aria-controls="catalogSidebarFilters">
+              <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-brand-600"></i>
+              <span>Filter Spesifikasi</span>
+              <span id="activeFilterBadge" class="hidden w-2 h-2 rounded-full bg-brand-600"></span>
+            </button>
+            
+            <div class="flex items-center justify-between sm:justify-end gap-2 text-xs w-full sm:w-auto pt-2.5 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+              <label for="catalogSort" class="text-gray-500 font-semibold font-heading whitespace-nowrap shrink-0">Urutkan:</label>
+              <select id="catalogSort" class="py-2 px-3 block w-full sm:w-auto max-w-full border border-gray-200 rounded-xl text-xs font-medium focus:border-brand-600 focus:ring-brand-600 bg-gray-50 text-gray-800">
+                <option value="featured">Model Unggulan (Pilihan)</option>
+                <option value="price-asc">Harga Terendah</option>
+                <option value="price-desc">Harga Tertinggi</option>
+                <option value="capacity-high">Kapasitas Pendinginan</option>
+                <option value="name-asc">Nama Model (A - Z)</option>
+              </select>
+            </div>
           </div>
         </div>
 

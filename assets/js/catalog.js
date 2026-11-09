@@ -149,9 +149,9 @@ function updateSeriesPillStyles() {
     if (val === 'Ultimate' && isUltimate) isActive = true;
 
     if (isActive) {
-      pill.className = 'series-pill active py-2 px-3.5 rounded-xl text-xs font-bold transition-all shrink-0 bg-brand-600 text-white shadow-sm font-heading';
+      pill.className = 'series-pill active py-2 px-3.5 rounded-xl text-xs font-bold transition-all shrink-0 bg-brand-600 text-white shadow-sm font-heading whitespace-nowrap';
     } else {
-      pill.className = 'series-pill py-2 px-3.5 rounded-xl text-xs font-medium transition-all shrink-0 bg-white border border-gray-200 text-gray-700 hover:border-brand-600 hover:text-brand-600 font-heading';
+      pill.className = 'series-pill py-2 px-3.5 rounded-xl text-xs font-medium transition-all shrink-0 bg-white border border-gray-200 text-gray-700 hover:border-brand-600 hover:text-brand-600 font-heading whitespace-nowrap';
     }
   });
 }
